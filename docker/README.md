@@ -1,6 +1,6 @@
-# Docker Cheat Sheet <img src="https://github.com/asanchezr/cheat-sheets/docker/blob/master/docker.png" width="50px"/>
+# Docker Cheat Sheet <img src="https://github.com/asanchezr/cheat-sheets/blob/master/docker/docker.png" width="50px"/>
 
-<img src="https://github.com/asanchezr/cheat-sheets/docker/blob/master/docker-architecture.png" />
+<img src="https://github.com/asanchezr/cheat-sheets/blob/master/docker/docker-architecture.png" />
 
 ### Useful Commands
 
