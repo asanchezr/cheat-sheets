@@ -161,14 +161,14 @@ docker-compose run <container_name_in_yml> /bin/bash
 
 ### Logging
 
-For more details about a running container
+Follow the container logs
 ```
-docker inspect <friendly-name|container-id>
+docker logs -ft <container_name>
 ```
 
-Display messages the container has written to standard error or standard out.
+For more details about a running container
 ```
-docker logs <friendly-name|container-id>
+docker inspect <container_name>
 ```
 
 ### Dockerfile
@@ -201,7 +201,7 @@ CMD [ "npm", "start" ]
 
 ### Docker Compose syntax
 
-`docker-compose.yml` file example
+docker-compose.yml file example
 
 ```
 version: '3'
