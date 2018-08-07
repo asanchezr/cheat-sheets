@@ -1,495 +1,264 @@
-# Docker Cheat Sheet
+# Docker Cheat Sheet <img src="https://github.com/asanchezr/cheat-sheets/docker/blob/master/docker.png" width="50px"/>
 
-# Table of Contents
+<img src="https://github.com/asanchezr/cheat-sheets/docker/blob/master/docker-architecture.png" />
 
-   * [Installation](#installation)
-   * [Cleaning Docker](#cleaning-docker)
-   * [Docker Registries &amp; Repositories](#docker-registries--repositories)
-   * [Running Containers](#running-containers)
-   * [Starting &amp; Stopping Containers](#starting--stopping-containers)
-   * [Getting Information about Containers](#getting-information-about-containers)
-   * [Networking](#networking)
+### Useful Commands
 
-# Installation
+For more information, see [15 Docker Tips in 5 minutes](http://sssslide.com/speakerdeck.com/bmorearty/15-docker-tips-in-5-minutes) and [CodeFresh Everyday Hacks Docker](https://codefresh.io/blog/everyday-hacks-docker/)
 
-## Linux
-
-For more information, see [here](https://docs.docker.com/install/#server)
-
+List Docker CLI commands
 ```
-curl -sSL https://get.docker.com/ | sh
+docker
+docker container --help
 ```
 
-## Mac
-
-For more information, see [here](https://docs.docker.com/docker-for-mac/install/)
-
-Use this link to download the dmg.
-
+Display Docker version and info
 ```
-https://download.docker.com/mac/stable/Docker.dmg
+docker --version
+docker version
+docker info
 ```
 
-##  Windows
-
-For more information, see [here](https://docs.docker.com/docker-for-windows/install/)
-
-Use the msi installer:
-
+List all the running containers
 ```
-https://download.docker.com/win/stable/InstallDocker.msi
+docker ps
 ```
 
-# Cleaning Docker
-
-## Removing a Running Container
-
+Download an image
 ```
-docker rm nginx
+docker pull image_name
 ```
 
-## Removing a Container and its Volume
-
+Rename a Docker container
 ```
-docker rm -v nginx
+docker rename node_v1 node_v2
 ```
 
-## Removing all Exited Containers
+### Delete Commands - Containers
 
+Remove a container and its volume
+```
+docker rm -v container_name
+```
+
+Remove all stopped containers
 ```
 docker rm $(docker ps -aq -f status=exited)
 ```
 
-
-## Removing All Stopped Containers
-
+Delete all RUNNING and stopped containers  (-f is force)
 ```
-docker rm $(docker ps -aq)
+docker rm -f $(docker ps -qa)
 ```
 
-## Removing a Docker Image
-
+Remove old containers
 ```
-docker rmi nginx
-```
-
-## Removing Dangling Images
-
-```
-docker rmi $(docker images -q -f dangling=true)
+docker ps -a | grep 'weeks ago' | awk '{print $1}' | xargs docker rm
 ```
 
-## Removing all Images
-
-```
-docker rmi $(docker images -aq)
-```
-
-## Removing all untagged images
-
-```
-docker rmi -f $(docker images | grep "^<none>" | awk "{print $3}")
-```
-
-## Stopping & Removing all Containers
-
+Stop and remove all containers
 ```
 docker stop $(docker ps -aq) && docker rm $(docker ps -aq)
 ```
 
-## Removing Dangling Volumes
+### Delete Commands - Images
 
+Remove an image from the local image store
+```
+docker rmi image_name
+```
+
+Remove dangling images
+```
+docker rmi $(docker images -q -f dangling=true)
+```
+
+Remove all images
+```
+docker rmi $(docker images -aq)
+```
+
+Remove all untagged images
+```
+docker rmi -f $(docker images | grep "^<none>" | awk "{print $3}")
+```
+
+### Delete Commands - Misc
+
+Remove dangling volumes
 ```
 docker volume rm $(docker volume ls -q -f dangling=true)
 ```
 
-## Removing all unused (containers, images, networks and volumes)
-
+Remove all unused (containers, images, networks and volumes)
 ```
 docker system prune -f
 ```
 
-## Clean all
-
+Clean all
 ```
 docker system prune -a
-```
-
-
-# Docker Registries & Repositories
-
-## Login to a Registry
-
-```
-docker login
-```
-
-```
-docker login localhost:8080
-```
-
-## Logout from a Registry.
-
-```
-docker logout
-```
-
-```
-docker logout localhost:8080
-```
-
-## Searching an Image
-
-```
-docker search nginx
-```
-
-```
-docker search --filter stars=3 --no-trunc nginx
-```
-
-## Pulling an Image
-
-```
-docker image pull nginx
-```
-
-```
-docker image pull eon01/nginx localhost:5000/myadmin/nginx
-```
-
-## Pushing an Image
-
-```
-docker image push eon01/nginx
-```
-
-```
-docker image push eon01/nginx localhost:5000/myadmin/nginx
-```
-
-# Running Containers
-
-## Create and Run a Simple Container
-
-> - Start an [ubuntu:latest](https://hub.docker.com/_/ubuntu/) image
-> - Bind the port `80` from the **CONTAINER** to port `3000` on the **HOST** 
-> - Mount the current directory to `/data` on the CONTAINER 
-> - Note: on **windows** you have to change `-v ${PWD}:/data` to `-v "C:\Data":/data`
-
-```
-docker container run --name infinite -it -p 3000:80 -v ${PWD}:/data ubuntu:latest
-```
-
-## Creating a Container
-
-```
-docker container create -t -i eon01/infinite --name infinite
-```
-
-## Running a Container
-
-```
-docker container run -it --name infinite -d eon01/infinite
-```
-
-## Renaming a Container
-
-```
-docker container rename infinite infinity
-```
-
-## Removing a Container
-
-```
-docker container rm infinite
-```
-
-## Updating a Container
-
-```
-docker container update --cpu-shares 512 -m 300M infinite
-```
-
-# Starting & Stopping Containers
-
-## Starting
-
-```
-docker container start nginx
-```
-
-## Stopping
-```
-docker container stop nginx
-```
-
-## Restarting
-```
-docker container restart nginx
-```
-
-## Pausing
-```
-docker container pause nginx
-
-```
-
-## Unpausing
-
-```
-docker container unpause nginx
-```
-
-## Blocking a Container
-
-```
-docker container wait nginx
-```
-
-## Sending a SIGKILL
-
-```
-docker container kill nginx
-```
-
-## Sending another signal
-
-```
-docker container kill -s HUP nginx
-```
-
-## Connecting to an Existing Container
-
-```
-docker container attach nginx
-```
-
 
-# Getting Information about Containers
-
-## Running Containers
-
-```
-docker container ls
-```
-
-```
-docker container ls -a
-```
-
-## Container Logs
-
-```
-docker logs infinite
-```
-
-## Follow Container Logs
-
-```
-docker container logs infinite -f
-```
-
-## Inspecting Containers
-
-```
-docker container inspect infinite
-```
-
-```
-docker container inspect --format '{{ .NetworkSettings.IPAddress }}' $(docker ps -q)
-```
-
-## Containers Events
-
-```
-docker system events infinite
-```
-
-## Public Ports
-
-```
-docker container port infinite
-```
-
-## Running Processes
-
-```
-docker container top infinite
-```
-
-## Container Resource Usage
-
-```
-docker container stats infinite
-```
-
-## Inspecting changes to files or directories on a container’s filesystem
-
-```
-docker container diff infinite
-```
-
-
-## Manipulating Images
-
-## Listing Images
-
-```
-docker image ls
-```
-
-## Building Images
-
+WARNING! This will remove:
+        - all stopped containers
+        - all networks not used by at least one container
+        - all dangling images
+        - all build cache
 ```
-docker build .
-```
-
-```
-docker build github.com/creack/docker-firefox
-```
-
-```
-docker build - < Dockerfile
-```
-
-```
-docker build - < context.tar.gz
-```
-
-```
-docker build -t eon/infinite .
-```
-
-```
-docker build -f myOtherDockerfile .
-```
-
-```
-curl example.com/remote/Dockerfile | docker build -f - .
-```
-
-
-
-## Removing an Image
-
-```
-docker image rm nginx
-```
 
-## Loading a Tarred Repository from a File or the Standard Input Stream
+### Build Commands
 
+Build an image from the Dockerfile in the current directory and tag the image
 ```
-docker image load < ubuntu.tar.gz
+docker build -t <tag_name> .
 ```
 
-```
-docker image load --input ubuntu.tar
-```
-
-## Save an Image to a Tar Archive
-
-```
-docker image save busybox > ubuntu.tar
-```
+### Run Commands
 
-## Showing the History of an Image
-
+Create and start commands
 ```
-docker image history
+docker run <container_name>:<tag_name>
+docker run -p <port_number>:<port_number> <container_name>
+docker run -d --name <container_name> -p <port_number> <image_name>:<tag_name> /* Expose container but on a randomly available port */
+docker run -d --name <container_name> -p <port_number>:<port_number> <image_name>:<tag_name>
 ```
 
-## Creating an Image From a Container
-
+Run command will always create a container. Examples of Run command based on the above order:
 ```
-docker container commit nginx
+docker run -d redis:latest
+docker run -p 3000:80 myapp
+docker run -d --name redisDynamic -p 6379 redis:latest
+docker run -d --name redisHostPort -p 6379:6379 redis:latest
 ```
-
-## Tagging an Image
 
+Create and start container, run command
 ```
-docker image tag nginx eon01/nginx
+docker run -it --name <container_name> <image_name> command
 ```
 
-## Pushing an Image
-
+Link a container with other containers
 ```
-docker image push eon01/nginx
+docker run --name <container_name> --restart always -p <port_name>:<port_name> --link <container_name_1> --net <network_name> --link <hostname> -d <container_name>
 ```
-
-
-# Networking
-
-## Creating Networks
 
-```
-docker network create -d overlay MyOverlayNetwork
-```
+### Execute Commands
 
+Run a command in a running container
 ```
-docker network create -d bridge MyBridgeNetwork
+docker exec -it <container_name> <command>
 ```
 
+Example - SSH into a running container
 ```
-docker network create -d overlay \
-  --subnet=192.168.0.0/16 \
-  --subnet=192.170.0.0/16 \
-  --gateway=192.168.0.100 \
-  --gateway=192.170.0.100 \
-  --ip-range=192.168.1.0/24 \
-  --aux-address="my-router=192.168.1.5" --aux-address="my-switch=192.168.1.6" \
-  --aux-address="my-printer=192.170.1.5" --aux-address="my-nas=192.170.1.6" \
-  MyOverlayNetwork
+# Use `docker ps` to get the name of the existing container
+docker exec -it <container_name> /bin/bash
 ```
-
-## Removing a Network
 
+Example - using docker-compose
 ```
-docker network rm MyOverlayNetwork
+docker-compose run <container_name_in_yml> /bin/bash
 ```
 
-## Listing Networks
+### Logging
 
+For more details about a running container
 ```
-docker network ls
+docker inspect <friendly-name|container-id>
 ```
 
-## Getting Information About a Network
-
+Display messages the container has written to standard error or standard out.
 ```
-docker network inspect MyOverlayNetwork
+docker logs <friendly-name|container-id>
 ```
 
-## Connecting a Running Container to a Network
+### Dockerfile
 
 ```
-docker network connect MyOverlayNetwork nginx
-```
+# Use an official node runtime as a parent image - Define the base image
+FROM node:latest
 
-## Connecting a Container to a Network When it Starts
+# Create work directory
+RUN mkdir -p /usr/src/app
 
-```
-docker container run -it -d --network=MyOverlayNetwork nginx
-```
+# Set working directory to /usr/src/app
+WORKDIR /usr/src/app
 
-## Disconnecting a Container from a Network
+# Copy package.json in current directory (host) to work directory (in container)
+COPY package.json .
 
-```
-docker network disconnect MyOverlayNetwork nginx
-```
+# Install dependencies specified in package.json
+RUN npm install
 
-## Exposing Ports
+# Copy entire files in current directory (host) to work directory (in container)
+COPY . .
 
-Using Dockerfile, you can expose a port on the container using:
+# Expose port 3000 for this container
+EXPOSE 3000
 
+# Command to start this container
+CMD [ "npm", "start" ]
 ```
-EXPOSE <port_number>
-```
-
-You can also map the container port to a host port using:
 
-e.g.
-
-```
-docker run -p $HOST_PORT:$CONTAINER_PORT --name infinite -t infinite
+### Docker Compose syntax
+
+`docker-compose.yml` file example
+
+```
+version: '3'
+services:
+  app:
+    build:
+      context: ./docker/app
+      dockerfile: Dockerfile
+    image: shippingdocker/app:latest
+    networks:
+     - appnet
+    volumes:
+     - .:/var/www/html
+    ports:
+     - ${APP_PORT}:80
+    working_dir: /var/www/html
+  cache:
+    image: redis:alpine
+    networks:
+     - appnet
+    volumes:
+     - cachedata:/data
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: homestead
+      MYSQL_USER: homestead
+      MYSQL_PASSWORD: secret
+    ports:
+     - ${DB_PORT}:3306
+    networks:
+     - appnet
+    volumes:
+     - dbdata:/var/lib/mysql
+  node:
+    build:
+      context: ./docker/node
+      dockerfile: Dockerfile
+    image: shippingdocker/node:latest
+    networks:
+     - appnet
+    volumes:
+     - .:/opt
+    working_dir: /opt
+    command: echo hi
+networks:
+  appnet:
+    driver: bridge
+volumes:
+  dbdata:
+    driver: local
+  cachedata:
+    driver: local
+```
+
+Create and start containers
+```
+docker-compose up
 ```
