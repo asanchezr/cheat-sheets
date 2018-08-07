@@ -45,62 +45,62 @@ https://download.docker.com/win/stable/InstallDocker.msi
 ## Removing a Running Container
 
 ```
-docker container rm nginx
+docker rm nginx
 ```
 
 ## Removing a Container and its Volume
 
 ```
-docker container rm -v nginx
+docker rm -v nginx
 ```
 
 ## Removing all Exited Containers
 
 ```
-docker container rm $(docker container ls -a -f status=exited -q)
+docker rm $(docker ps -aq -f status=exited)
 ```
 
 
 ## Removing All Stopped Containers
 
 ```
-docker container rm `docker container ls -a -q`
+docker rm $(docker ps -aq)
 ```
 
 ## Removing a Docker Image
 
 ```
-docker image rm nginx
+docker rmi nginx
 ```
 
 ## Removing Dangling Images
 
 ```
-docker image rm $(docker image ls -f dangling=true -q)
+docker rmi $(docker images -q -f dangling=true)
 ```
 
 ## Removing all Images
 
 ```
-docker image rm $(docker image ls -a -q)
+docker rmi $(docker images -aq)
 ```
 
 ## Removing all untagged images
 
 ```
-docker image rm -f $(docker image ls | grep "^<none>" | awk "{print $3}")
+docker rmi -f $(docker images | grep "^<none>" | awk "{print $3}")
 ```
 
 ## Stopping & Removing all Containers
 
 ```
-docker container stop $(docker container ls -a -q) && docker container rm $(docker container ls -a -q)
+docker stop $(docker ps -aq) && docker rm $(docker ps -aq)
 ```
 
 ## Removing Dangling Volumes
 
 ```
-docker volume rm $(docker volume ls -f dangling=true -q)
+docker volume rm $(docker volume ls -q -f dangling=true)
 ```
 
 ## Removing all unused (containers, images, networks and volumes)
